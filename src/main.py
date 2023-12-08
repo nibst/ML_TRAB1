@@ -5,8 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn import preprocessing
 import copy
 
-def random_forest_cross_validation(processed_dataset_df):
-    clf = RandomForestClassifier(n_estimators=55, max_depth=5, random_state=0)
+def cross_validation(classifier, processed_dataset_df):
     target = 'HeartDisease'
     features = processed_dataset_df.columns.to_list() 
     features.remove(target)
@@ -14,8 +13,8 @@ def random_forest_cross_validation(processed_dataset_df):
     X = processed_dataset_df[features].values
     y = processed_dataset_df[target].values
     kf = KFold(n_splits=6)
-    result = cross_val_score(clf, X, y, cv = kf)
-    clf.fit(X,y)
+    result = cross_val_score(classifier, X, y, cv = kf)
+    classifier.fit(X,y)
     print("K-Fold (R^2) Scores: {0}".format(result))
     print("Mean R^2 for Cross-Validation K-Fold: {0}".format(result.mean()))
 
@@ -55,9 +54,11 @@ def main():
     #NORMALIZATION - No need for random forest, knn needs to be normalized
     normalized_df = normalize_minmax_scaling(processed_heart_failure_df)
     #RANDOM FOREST
-    random_forest_cross_validation(processed_heart_failure_df)
-    random_forest_cross_validation(one_hot_encoded_heart_failure_df)
-    random_forest_cross_validation(normalized_df)
+    classifier = RandomForestClassifier(n_estimators=55, max_depth=5, random_state=0)
+
+    cross_validation(classifier,processed_heart_failure_df)
+    cross_validation(classifier,one_hot_encoded_heart_failure_df)
+    cross_validation(classifier,normalized_df)
     #KNN
 
 
